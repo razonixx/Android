@@ -2,11 +2,15 @@ package com.example.jan28;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.io.File;
+import java.util.Properties;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -25,11 +29,20 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView textView;
 
+    private DBHelper db;
+
+    //Properties
+    //For java applications
+    //A way to save key-value sets on local storage
+
+    private Properties properties;
+    private static final String PROPERTIES_FILE = "properties.xml";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        final DBHelper db = new DBHelper(getApplicationContext());
+        db = new DBHelper(getApplicationContext());
         bAdd = findViewById(R.id.button);
         bFind = findViewById(R.id.button2);
         bDelete = findViewById(R.id.button3);
@@ -37,6 +50,16 @@ public class MainActivity extends AppCompatActivity {
         editTextName = findViewById(R.id.editText2);
         editTextGrade = findViewById(R.id.editText3);
         textView = findViewById(R.id.textView);
+
+        properties = new Properties();
+
+        File file = new File(getFilesDir(), PROPERTIES_FILE);
+
+        if(file.exists()){
+
+        } else{
+
+        }
 
         bAdd.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,6 +75,10 @@ public class MainActivity extends AppCompatActivity {
                 String found = db.find(editTextName.getText().toString());
                 //Toast.makeText(getApplicationContext(), found, Toast.LENGTH_SHORT).show();
                 textView.setText(found);
+                if(TextUtils.isEmpty(textView.getText().toString()))
+                {
+                    textView.setText("Entry " + editTextName.getText().toString() + ": not found.");
+                }
             }
         });
 
