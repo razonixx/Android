@@ -1,5 +1,7 @@
 package com.example.jan28;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -10,6 +12,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
 
 public class MainActivity extends AppCompatActivity {
@@ -22,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
     private Button bAdd;
     private Button bFind;
     private Button bDelete;
+    private Button bMemory;
+    private Button bFile;
 
     private EditText editTextID;
     private EditText editTextName;
@@ -46,6 +55,8 @@ public class MainActivity extends AppCompatActivity {
         bAdd = findViewById(R.id.button);
         bFind = findViewById(R.id.button2);
         bDelete = findViewById(R.id.button3);
+        bMemory = findViewById(R.id.button4);
+        bFile = findViewById(R.id.button5);
         editTextID = findViewById(R.id.editText);
         editTextName = findViewById(R.id.editText2);
         editTextGrade = findViewById(R.id.editText3);
@@ -56,9 +67,21 @@ public class MainActivity extends AppCompatActivity {
         File file = new File(getFilesDir(), PROPERTIES_FILE);
 
         if(file.exists()){
-
-        } else{
-
+            Toast.makeText(this, "LOADING FILE", Toast.LENGTH_SHORT).show();
+            try {
+                FileInputStream fis = openFileInput(PROPERTIES_FILE);
+                properties.loadFromXML(fis);
+                fis.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (InvalidPropertiesFormatException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Toast.makeText(this, "CREATING FILE", Toast.LENGTH_SHORT).show();
+            saveProperties();
         }
 
         bAdd.setOnClickListener(new View.OnClickListener() {
@@ -92,5 +115,40 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        bMemory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                properties.put(editTextName.getText().toString(), editTextGrade.getText().toString());
+                Toast.makeText(getApplicationContext(), "Saving to memory...", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        bFile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Save what's on memory to file
+                saveProperties();
+                Toast.makeText(getApplicationContext(), "Saving to file...", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+    private void saveProperties(){
+        try {
+            FileOutputStream fos = openFileOutput(PROPERTIES_FILE, Context.MODE_PRIVATE);
+            properties.storeToXML(fos, null);
+            fos.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public void printProperty(View v){
+        Toast.makeText(getApplicationContext(), "Property Key: " +editTextName.getText().toString() + "\nProperty Value: " + properties.get(editTextName.getText().toString()), Toast.LENGTH_SHORT).show();
+    }
+    public void changeActivity(View v){
+        Intent intent = new Intent(getApplicationContext(), SharedPrefsActivity.class);
+        startActivity(intent);
     }
 }
