@@ -2,6 +2,7 @@ package com.example.feb14;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Adapter;
 import android.widget.AdapterView;
@@ -36,7 +37,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, data);
 
-        //Use our custom adapter
+        //CustomAdapter with Arraylist
 
         ArrayList<Student> students = new ArrayList<>();
 
@@ -46,12 +47,20 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         students.add(new Student("Rosa", 25.5f, 400));
         students.add(new Student("Quirino", 12.4f, 500));
 
-        CustomAdapter customAdapter = new CustomAdapter(students, this);
+
+        //CustomAdapter with SQLite DB
+
+        DBHelper db = new DBHelper(getApplicationContext());
+        //db.add("Carlos10", 100);
+        Log.wtf("DB TEST", " Name: " + db.getName(1) + " Grade: " + db.getGrade(1));
+
+        /*CustomAdapter customAdapter = new CustomAdapter(db, this);
+
         list.setAdapter(customAdapter);
         list.setOnItemClickListener(this);
         spinner.setAdapter(customAdapter);
         list.setOnItemClickListener(this);
-        spinner.setOnItemSelectedListener(this);
+        spinner.setOnItemSelectedListener(this);*/
     }
 
     @Override

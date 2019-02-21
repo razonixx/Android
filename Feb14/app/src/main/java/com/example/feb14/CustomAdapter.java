@@ -12,10 +12,16 @@ import java.util.ArrayList;
 public class CustomAdapter extends BaseAdapter {
 
     private ArrayList<Student> source;
+    private DBHelper db;
     private Activity activity;
 
     public CustomAdapter(ArrayList<Student> source, Activity activity){
         this.source = source;
+        this.activity = activity;
+    }
+
+    public CustomAdapter(DBHelper db, Activity activity){
+        this.db = db;
         this.activity = activity;
     }
 
